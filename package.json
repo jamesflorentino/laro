@@ -1,6 +1,6 @@
 {
   "name": "laro",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Yet another Entity-Component-System game micro-framework in JavaScript. Only this time, written in ES6.",
   "main": "laro.js",
   "scripts": {
