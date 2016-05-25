@@ -34,19 +34,21 @@ import CombatSystem from './systems/CombatSystem'
 let world = new laro.World()
 
 /*
-  A system handles logic. The first parameter is the system instance and the
-  second parameter is for its reuired dependencies
- */
-world.addSystem(new CombatSystem(), ['stats' , 'combat'])
-
-/*
-  We register pre-defined components in our game world
+  We register pre-defined components in our game world to be instantiated and
+  used later by generated entities.
  */
 world.addComponents([
   ['stats', StatsComponent],
   ['character', CharacterComponent],
   ['combat', CombatComponent]
 ])
+
+/*
+  A System object handles different kinds of logic. The second argument
+  is the required components
+ */
+world.addSystem(new CombatSystem(), ['stats' , 'combat'])
+
 
 /*
   Creating an entity can be purely done from a .json file if wanted.
