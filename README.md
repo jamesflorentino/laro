@@ -2,8 +2,9 @@
 
 # laro.js
 
-Yet another Entity-Component-System game micro-framework in JavaScript. Only this time, written in ES6. It also auto-generates a documentation page of your code if you provide
-write them in jsdoc syntax in your actual code.
+Yet another Entity-Component-System game micro-framework in JavaScript. Only
+this time, written in ES6. It also auto-generates a documentation page of your
+code if you write them in jsdoc syntax in your actual code.
 
 Goals
 =====
