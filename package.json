@@ -1,0 +1,33 @@
+{
+  "name": "laro",
+  "version": "0.0.1",
+  "description": "Yet another Entity-Component-System game micro-framework in JavaScript. Only this time, written in ES6.",
+  "main": "laro.js",
+  "scripts": {
+    "start": "gulp build",
+    "test": "gulp test",
+    "postInstall": "gulp build"
+  },
+  "author": "James O. Florentino <jamesflorentino@gmail.com> (http://jamesflorentino.com/)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jamesflorentino/laro.git"
+  },
+  "browserify": {
+    "transform": [
+      "babelify"
+    ]
+  },
+  "devDependencies": {
+    "ava": "0.14.0",
+    "babel": "6.5.2",
+    "babel-preset-es2015": "6.9.0",
+    "babel-register": "6.9.0",
+    "chai": "3.5.0",
+    "gulp-connect": "4.0.0",
+    "gulp-exit": "0.0.2",
+    "gulp-mocha": "2.2.0",
+    "mocha": "2.4.5"
+  }
+}

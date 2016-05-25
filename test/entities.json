@@ -1,0 +1,22 @@
+{
+  "ship": {
+    "stats": {
+      "hp": 100,
+      "atk": 10,
+      "spd": 500
+    },
+    "player": true,
+    "input": true,
+    "combat": true,
+    "body": {
+      "speed": { "x": 1000 }
+    }
+  },
+  "ufo": {
+    "combat": true,
+    "stats": {
+      "hp": 100,
+      "atk": 10
+    }
+  }
+}
