@@ -34,8 +34,8 @@ import CombatSystem from './systems/CombatSystem'
 let world = new laro.World()
 
 /*
-  We register pre-defined components in our game world to be instantiated and
-  used later by generated entities.
+  We register pre-defined component classes in our game world to be instantiated
+  and used later by generated entities.
  */
 world.addComponents([
   ['stats', StatsComponent],
