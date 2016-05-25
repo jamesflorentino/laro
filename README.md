@@ -51,9 +51,9 @@ world.addSystem(new CombatSystem(), ['stats' , 'combat'])
 
 
 /*
-  Creating an entity can be purely done from a .json file if wanted.
-  This enables to loosely configure characters programmatically
-  without hardcoding the configuration inside the actual game level code.
+  Creating an entity can be configured from a .json file if wanted.
+  This enables us to loosely configure characters programmatically
+  without hardcoding the arbitrary data inside the actual game level code.
 
   file: ./data/entities/hero.json
 
