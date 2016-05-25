@@ -2,13 +2,23 @@
 
 # laro.js
 
-Yet another Entity-Component-System game micro-framework in JavaScript. Only this time, written in ES6.
+Yet another Entity-Component-System game micro-framework in JavaScript. Only this time, written in ES6. It also auto-generates a documentation page of your code if you provide
+write them in jsdoc syntax in your actual code.
 
-# About
+Goals
+=====
 
-I made this project out of need in my current project. I may or may not continue working on this depending on the outcome of said project.
+- To provide a sustainable design pattern for writing large, complex and ambitious HTML5 JavaScript games
+- To be easy to integrate with other JavaScript frameworks.
+- To provide a deterministic architecture that can be used for server-side logic
 
-# Basic Usaage
+Installation
+============
+
+- `npm install laro --save`
+
+Basic Usaage
+============
 
 ```javascript
 import laro from 'laro'
@@ -78,10 +88,12 @@ console.log(monster.components.character.name) // => Bakemono
 console.log(monster.components.character.type) // => monster
 ```
 
-# Acknowledgment
+Acknowledgment
+==============
 
 James Florentino
 
-# License
+License
+=======
 
 MIT
