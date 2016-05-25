@@ -14,6 +14,5 @@ export default class CombatComponent extends Component {
 
   removeTarget() {
     delete this.target
-    this.deactivate()
   }
 }
