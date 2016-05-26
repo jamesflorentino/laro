@@ -37,23 +37,19 @@ let world = new laro.World()
   We register pre-defined component classes in our game world to be instantiated
   and used later by generated entities.
  */
-world.addComponents([
+world.components.register([
   ['stats', StatsComponent],
   ['character', CharacterComponent],
   ['combat', CombatComponent]
 ])
 
 /*
-  A System object handles different kinds of logic. The second argument
-  is the required components
+  A System object handles different kinds of logic.
  */
 world.addSystem(new CombatSystem(), ['stats' , 'combat'])
 
-
 /*
-  Creating an entity can be configured from a .json file if wanted.
-  This enables us to loosely configure characters programmatically
-  without hardcoding the arbitrary data inside the actual game level code.
+  Creating an entity can be configured from a .json file.
 
   file: ./data/entities/hero.json
 
@@ -72,24 +68,34 @@ world.addSystem(new CombatSystem(), ['stats' , 'combat'])
     "combat": true
   }
  */
+
 let hero = world.addEntity(require('./data/entities/hero.json'))
 let monster = world.addEntity(require('./data/entities/monster.json'))
 
 /*
   You can expose and call functions of your component.
  */
+
 hero.components.combat.setTarget(monster)
 
 /*
   Updates are ticks that advances the frame of the game. All system logic
   are executed.
  */
+
 world.update(1)
 
 console.log(monster.components.stats.attribute.health.isEmpty()) // => true
 console.log(monster.components.character.name) // => Bakemono
 console.log(monster.components.character.type) // => monster
 ```
+
+Design Patterns
+===============
+
+- Components are data. Extend `laro.Component` as your base class
+- Systems are the logic. Extend `laro.System` as yoru base class
+- Entities are just component containers with a basic API for attaching and detaching them.
 
 Acknowledgment
 ==============
