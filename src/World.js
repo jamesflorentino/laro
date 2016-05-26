@@ -1,18 +1,22 @@
-import Entity from '../src/Entity'
-import eachKey from '../src/util/eachKey'
+import ComponentManager from './ComponentManager'
+import Entity from './Entity'
+import eachKey from './util/eachKey'
+import WorldEventManager from './WorldEventManager'
 
 export default class World {
   constructor() {
     this.entities = []
     this._entities = {}
     this.systems = []
-    this.components = {}
+    this.components = new ComponentManager()
     this.lastUpdate = Date.now()
     this.pool = {}
     this.fps = 1/30
 
     this.entitiesToComponents = {}
     this.componentsToEntities = {}
+    this.events = new WorldEventManager()
+
   }
 
   addEntity(json) {
@@ -22,11 +26,13 @@ export default class World {
     this.entitiesToComponents[entity.id] = {}
     this.entities.push(this._entities[entity.id] = entity)
     eachKey(json, (key, value) => {
-      var ComponentClass = this.components[key]
-      if (ComponentClass) {
-        entity.attach(key, new ComponentClass(value))
+      var component = this.components.create(key, value)
+      if (component) {
+        entity.attach(key, component)
+        this.events.onAttachComponent.dispatch(entity, component)
       }
     })
+    this.events.onAddEntity.dispatch(entity, json)
     return entity
   }
 
@@ -47,16 +53,6 @@ export default class World {
 
   addEntities(array) {
     array.forEach((ison) => this.addEntity(ison))
-    return this
-  }
-
-  addComponent(name, ComponentClass) {
-    this.components[name] = ComponentClass
-    return this
-  }
-
-  addComponents(array) {
-    array.forEach((arr) => this.addComponent(arr[0], arr[1]))
     return this
   }
 

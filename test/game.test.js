@@ -8,7 +8,7 @@ describe('game', () => {
   var world = new laro.World()
   world.fps = 1 / 1
 
-  world.addComponents([
+  world.components.register([
     ['stats', laro.components.StatsComponent],
     ['input', laro.components.InputComponent],
     ['player', laro.components.PlayerComponent],
@@ -30,6 +30,21 @@ describe('game', () => {
     world.addEntity(entities.ship)
     world.addEntity(entities.ufo)
     assert.equal(world.entities.length, 2, 'entities added')
+  })
+
+  it('notifies when an entity is added', () => {
+    var notified
+    var data = { foo: 'yes' }
+    world.events.onAddEntity.add(() => notified = true)
+    world.addEntity(data)
+    assert.equal(notified, true, 'it notifies')
+  })
+
+  it('notifies when a component is attached', () => {
+    var notified
+    world.events.onAttachComponent.add(() => notified = true)
+    world.addEntity(entities.ship)
+    assert.equal(notified, true, 'it notifies')
   })
 
   it('can run an update', () => {
