@@ -21,3 +21,17 @@ export default class Component {
     this.active = true
   }
 }
+
+Component.getName = (component) => {
+  var name
+  if ('function' === typeof component) {
+    name = component.name
+  } else if ('object' === typeof component && 'function' === typeof component.constructor) {
+    name = component.constructor.name
+  } else {
+    return
+  }
+  return name
+    .replace('Component', '')
+    .replace(/^./, (str) => str.toLowerCase())
+}

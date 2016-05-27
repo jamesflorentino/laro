@@ -1,15 +1,22 @@
+import Component from './Component'
+
 export default class ComponentManager {
   constructor() {
     this.components = {}
   }
 
-  register(array) {
-    array.forEach((record) => {
-      this.add(record[0], record[1])
-    }, this)
+  register(component) {
+    if (component instanceof Array) {
+      component.forEach(this.add, this)
+    } else if (component.prototype instanceof Component) {
+      this.add(component)
+    }
+
+    return this
   }
 
-  add(name, ComponentClass) {
+  add(ComponentClass) {
+    var name = Component.getName(ComponentClass)
     this.components[name] = ComponentClass
   }
 

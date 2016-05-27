@@ -28,7 +28,7 @@ function test() {
       read: false
     })
     .pipe(mocha({
-      reporter: 'nyan',
+      reporter: 'spec',
       verbose: true,
       require: ['babel-register']
     }))

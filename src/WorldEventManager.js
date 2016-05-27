@@ -4,5 +4,6 @@ export default class WorldEventManager {
   constructor() {
     this.onAttachComponent = new Signal()
     this.onAddEntity = new Signal()
+    this.onReadEntityProperty = new Signal()
   }
 }

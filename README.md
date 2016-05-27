@@ -37,16 +37,15 @@ let world = new laro.World()
   We register pre-defined component classes in our game world to be instantiated
   and used later by generated entities.
  */
-world.components.register([
-  ['stats', StatsComponent],
-  ['character', CharacterComponent],
-  ['combat', CombatComponent]
-])
+world.components
+  .register(StatsComponent)
+  .register(CharacterComponent)
+  .register(CombatComponent)
 
 /*
   A System object handles different kinds of logic.
  */
-world.addSystem(new CombatSystem(), ['stats' , 'combat'])
+world.register(CombatSystem, [ StatsComponent, CombatComponent ])
 
 /*
   Creating an entity can be configured from a .json file.

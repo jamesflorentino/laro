@@ -4,26 +4,39 @@ import {
 import laro from '../laro'
 import entities from './entities.json'
 
-describe('game', () => {
+describe('An example game world', () => {
   var world = new laro.World()
   world.fps = 1 / 1
 
-  world.components.register([
-    ['stats', laro.components.StatsComponent],
-    ['input', laro.components.InputComponent],
-    ['player', laro.components.PlayerComponent],
-    ['combat', laro.components.CombatComponent],
-    ['body', laro.components.BodyComponent],
-    ['your_component', function() {}],
-  ])
+  it('can register component classes', () => {
+    world.components
+      .register(laro.components.StatsComponent)
+      .register(laro.components.InputComponent)
+      .register(laro.components.PlayerComponent)
+      .register(laro.components.CombatComponent)
+      .register(laro.components.BodyComponent)
+  })
 
   it('can register systems', () => {
-    world.addSystems([
-      [new laro.systems.InputSystem(), ['player', 'input', 'body']],
-      [new laro.systems.MoveSystem(), ['stats', 'body']],
-      [new laro.systems.CombatSystem(), ['stats', 'combat']]
-    ])
+    world
+      .register(laro.systems.InputSystem, [
+        laro.components.PlayerComponent,
+        laro.components.InputComponent,
+        laro.components.BodyComponent
+      ])
+      .register(laro.systems.MoveSystem, [
+        laro.components.StatsComponent,
+        laro.components.BodyComponent
+      ])
+      .register(laro.systems.CombatSystem, [
+        laro.components.StatsComponent,
+        laro.components.CombatComponent
+      ])
+
     assert.equal(world.systems.length, 3, 'systems added')
+    assert.equal(world.systems[0].requiredComponents.length, 3)
+    assert.equal(world.systems[1].requiredComponents.length, 2)
+    assert.equal(world.systems[2].requiredComponents.length, 2)
   })
 
   it('can create entities', () => {
@@ -34,7 +47,9 @@ describe('game', () => {
 
   it('notifies when an entity is added', () => {
     var notified
-    var data = { foo: 'yes' }
+    var data = {
+      foo: 'yes'
+    }
     world.events.onAddEntity.add(() => notified = true)
     world.addEntity(data)
     assert.equal(notified, true, 'it notifies')
@@ -61,6 +76,7 @@ describe('game', () => {
   it('allows entities to engage combat with another', () => {
     var a = world.entities[0]
     var b = world.entities[1]
+
     var atk = a.components.stats.attribute.atk
     var hp = b.components.stats.attribute.hp
 
