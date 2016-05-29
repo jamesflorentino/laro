@@ -58,6 +58,14 @@ export default class Stat {
     return this
   }
 
+  empty() {
+    this._current = this._min
+  }
+
+  reset() {
+    this._current = this._max
+  }
+
   /**
    * @method empty
    * @return {Boolean}

@@ -1,6 +1,13 @@
 import Component from '../Component'
 import Stat from '../Stat'
 
+
+/**
+ * @class StatsComponent
+ * @extends Component
+ * @constructor
+ */
+
 export default class StatsComponent extends Component {
   constructor(options) {
     super()

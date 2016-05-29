@@ -1,11 +1,11 @@
 import Component from '../Component'
 
-
 /**
- * @class PlayerComponent
+ * @class DisplayComponent
  * @extends Component
  * @constructor
  */
 
-export default class PlayerComponent extends Component {
+export default class DisplayComponent extends Component {
 }
+

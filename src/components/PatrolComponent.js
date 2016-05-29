@@ -2,10 +2,10 @@ import Component from '../Component'
 
 
 /**
- * @class PlayerComponent
+ * @class PatrolComponent
  * @extends Component
  * @constructor
  */
 
-export default class PlayerComponent extends Component {
+export default class PatrolComponent extends Component {
 }

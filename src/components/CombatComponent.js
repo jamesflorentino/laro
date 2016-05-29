@@ -1,5 +1,12 @@
 import Component from '../Component'
 
+
+/**
+ * @class CombatComponent
+ * @extends Component
+ * @constructor
+ */
+
 export default class CombatComponent extends Component {
   setTarget(target, cooldown) {
     if (target) {

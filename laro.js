@@ -4,7 +4,12 @@ export default {
     CombatComponent: require('./src/components/CombatComponent').default,
     InputComponent: require('./src/components/InputComponent').default,
     PlayerComponent: require('./src/components/PlayerComponent').default,
+    PhaserSpriteComponent: require('./src/components/PhaserSpriteComponent').default,
+    PatrolComponent: require('./src/components/PatrolComponent').default,
     StatsComponent: require('./src/components/StatsComponent').default,
+    GunComponent: require('./src/components/GunComponent').default,
+    BulletComponent: require('./src/components/BulletComponent').default,
+    DisplayComponent: require('./src/components/DisplayComponent').default,
   },
 
   systems: {

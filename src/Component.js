@@ -1,27 +1,38 @@
+import MutableClass from './MutableClass'
 /**
  * @class Component
+ * @extends MutableClass
  * @constructor
  * @param {Object} object attributes to pass to this component
  */
 
-export default class Component {
-  constructor(object) {
-    for (var variable in object) {
-      if (object.hasOwnProperty(variable)) {
-        this[variable] = object[variable]
-      }
-    }
-  }
+export default class Component extends MutableClass {
 
+  /**
+   * @property active
+   * @type {Boolean}
+   */
+
+  /**
+   * @method deactivate
+   */
   deactivate() {
     this.active = false
   }
 
+  /**
+   * @method activate
+   */
   activate() {
     this.active = true
   }
 }
 
+/**
+ * @method getName
+ * @param {Function|String} ComponentClass
+ * @static
+ */
 Component.getName = (component) => {
   var name
   if ('function' === typeof component) {
@@ -33,5 +44,7 @@ Component.getName = (component) => {
   }
   return name
     .replace('Component', '')
-    .replace(/^./, (str) => str.toLowerCase())
+    .replace(/([a-z])([A-Z])/g, '$1_$2')
+    .toLowerCase()
+    //.replace(/^./, (str) => str.toLowerCase())
 }

@@ -1,10 +1,13 @@
 import System from '../System'
 
-export default class CombatSystem extends System {
-  constructor() {
-    super()
-  }
+/**
+ * A basic combat system
+ * @class CombatSystem
+ * @extends System
+ * @constructor
+ */
 
+export default class CombatSystem extends System {
   update(entity, dt) {
     var { combat, stats } = entity.components
 

@@ -19,16 +19,16 @@ describe('An example game world', () => {
 
   it('can register systems', () => {
     world
-      .register(laro.systems.InputSystem, [
+      .register(new laro.systems.InputSystem(), [
         laro.components.PlayerComponent,
         laro.components.InputComponent,
         laro.components.BodyComponent
       ])
-      .register(laro.systems.MoveSystem, [
+      .register(new laro.systems.MoveSystem(), [
         laro.components.StatsComponent,
         laro.components.BodyComponent
       ])
-      .register(laro.systems.CombatSystem, [
+      .register(new laro.systems.CombatSystem(), [
         laro.components.StatsComponent,
         laro.components.CombatComponent
       ])
@@ -40,8 +40,8 @@ describe('An example game world', () => {
   })
 
   it('can create entities', () => {
-    world.addEntity(entities.ship)
-    world.addEntity(entities.ufo)
+    world.add(entities.ship)
+    world.add(entities.ufo)
     assert.equal(world.entities.length, 2, 'entities added')
   })
 
@@ -51,14 +51,14 @@ describe('An example game world', () => {
       foo: 'yes'
     }
     world.events.onAddEntity.add(() => notified = true)
-    world.addEntity(data)
+    world.add(data)
     assert.equal(notified, true, 'it notifies')
   })
 
   it('notifies when a component is attached', () => {
     var notified
     world.events.onAttachComponent.add(() => notified = true)
-    world.addEntity(entities.ship)
+    world.createEntity(entities.ship)
     assert.equal(notified, true, 'it notifies')
   })
 
@@ -79,6 +79,7 @@ describe('An example game world', () => {
 
     var atk = a.components.stats.attribute.atk
     var hp = b.components.stats.attribute.hp
+
 
     world.update(1)
     assert.equal(hp.current(), hp.max() - atk.current(), 'target hp is correct')

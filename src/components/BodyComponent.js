@@ -2,6 +2,13 @@ import Component from '../Component'
 import Point from '../Point'
 import isObject from '../util/isObject'
 
+
+/**
+ * @class BodyComponent
+ * @extends Component
+ * @constructor
+ */
+
 export default class BodyComponent extends Component {
   constructor(options) {
     super(options)

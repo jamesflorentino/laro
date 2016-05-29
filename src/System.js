@@ -1,9 +1,25 @@
+import Component from './Component'
 import MutableClass from './MutableClass'
 /**
  * @class System
  */
 
 export default class System extends MutableClass {
+  constructor() {
+    super()
+    this.isStandalone = false
+    this.requiredComponents = []
+  }
+
+  start() {}
+
+  require(classOrClassName) {
+    if (classOrClassName.prototype instanceof Component) {
+      classOrClassName = Component.getName(classOrClassName)
+    }
+    this.requiredComponents.push(classOrClassName)
+    return this
+  }
 
   /**
    * @property requiredComponents
@@ -15,26 +31,4 @@ export default class System extends MutableClass {
    * @method update
    */
   update( /** dt **/ ) {}
-
-  /**
-   * @method isAcceptedEntity
-   * @param {Entity} entity
-   * @return {Boolean}
-   */
-  isAcceptedEntity(entity) {
-    var required = this.requiredComponents
-    if (!required) {
-      return
-    }
-    var total = required.length
-    if (!total) {
-      return
-    }
-    for (var i = 0; i < total; i++) {
-      if (!entity.get(required[i])) {
-        return false
-      }
-    }
-    return true
-  }
 }

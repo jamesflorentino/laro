@@ -1,7 +1,15 @@
 import Signal from './Signal'
 import Component from './Component'
+import isFunction from './util/isFunction'
 
 var id = 1
+
+function parseKey(nameOrFunction) {
+  if (isFunction(nameOrFunction)) {
+    return Component.getName(nameOrFunction)
+  }
+  return nameOrFunction
+}
 
 /**
  * @class Entity
@@ -51,7 +59,7 @@ export default class Entity {
     this.components[key] = component
     component.activate()
     this.onAttachComponent.dispatch(this, component)
-    return
+    return this
   }
 
   /**
@@ -77,6 +85,7 @@ export default class Entity {
    * @return Component
    */
   get(key) {
-    return this.components[key]
+    var name = parseKey(key)
+    return this.components[name]
   }
 }

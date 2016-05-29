@@ -1,6 +1,5 @@
 import ComponentManager from './ComponentManager'
 import Entity from './Entity'
-import eachKey from './util/eachKey'
 import WorldEventManager from './WorldEventManager'
 import Component from './Component'
 
@@ -18,14 +17,6 @@ export default class World {
      */
 
     this.entities = []
-
-    /**
-     * Dictionary of registered entities
-     * @property _entities
-     * @type {Object}
-     * @private
-     * @internal
-     */
 
     this._entities = {}
 
@@ -63,26 +54,6 @@ export default class World {
     this.fps = 1 / 30
 
     /**
-     * Hash of entities to components relationships
-     * @property entitiesToComponents
-     * @type {Object}
-     * @private
-     * @internal
-     */
-
-    this.entitiesToComponents = {}
-
-    /**
-     * Hash of components to entities relationships
-     * @property componentsToEntities
-     * @type {Object}
-     * @private
-     * @internal
-     */
-
-    this.componentsToEntities = {}
-
-    /**
      * A container for managing world events
      * @property events
      * @type {WorldEventManager}
@@ -90,64 +61,85 @@ export default class World {
 
     this.events = new WorldEventManager()
 
+    this.systemsToEntities = {}
+    this._entitiesToSystems = {}
+    this._systems = {}
+
   }
 
-  /**
-   * Adds an entity to the game world. It dispatches `events.onAttachComponent`
-   * and `events.onAddEntity` signals.
-   *
-   * @method addEntity
-   * @param {Object} json configuration for this entitiy
-   * @return {Entity}
-   */
+  get(id) {
+    return this._entities[id]
+  }
 
-  addEntity(json) {
-    var entity = new Entity()
-    entity.onAttachComponent.add(this.onAttachComponent, this)
-    entity.onDetachComponent.add(this.onDetachComponent, this)
-    this.entitiesToComponents[entity.id] = {}
-    this.entities.push(this._entities[entity.id] = entity)
-    eachKey(json, (key, value) => {
-      this.events.onReadEntityProperty.dispatch(entity, key, value)
-      var component = this.components.create(key, value)
-      if (component) {
-        entity.attach(component)
-        this.events.onAttachComponent.dispatch(entity, component)
-      }
+  remove(entity) {
+    // remove all references
+    this.entities.splice(this.entities.indexOf(entity), 1)
+    var systems = this._entitiesToSystems[entity.id]
+    systems.forEach(system => {
+      var entities = this.systemsToEntities[system.constructor.name]
+      entities.splice(entities.indexOf(entity), 1)
     })
+    delete this._entitiesToSystems[entity.id]
+    this.events.onRemoveEntity.dispatch(entity)
+  }
+
+  add(json) {
+    var entity = json instanceof Entity ? json : this.createEntity(json)
+    this._entitiesToSystems[entity.id] = []
+    this._entities[entity.id] = entity
+    this.entities.push(entity)
     this.events.onAddEntity.dispatch(entity, json)
+    this.registerEntitytoSystems(entity)
+    entity.onAttachComponent.add(this.onAttachComponent, this)
     return entity
   }
 
   /**
-   * When a component is attached
-   * @event onAttachComponent
-   * @param {Entity} entity
-   * @param {Component} component
+   * @method createEntity
+   * @param {Object} json configuration for this entitiy
+   * @return {Entity}
    */
 
-  onAttachComponent(entity, component) {
-    if (component instanceof Component) {
-      var name = Component.getName(component)
-      this.entitiesToComponents[entity.id][name] = component
-      if (!this.componentsToEntities[name]) {
-        this.componentsToEntities[name] = {}
+  createEntity(json) {
+    var entity = new Entity()
+
+    for (var key in json) {
+      var value = json[key]
+      this.events.onReadEntityProperty.dispatch(entity, key, value)
+      var component = this.components.create(key, value)
+
+      if (component) {
+        entity.attach(component)
+        this.events.onAttachComponent.dispatch(entity, component)
       }
-      this.componentsToEntities[name][entity.id] = component
     }
+    
+    return entity
   }
 
 
-  /**
-   * When a component is detached
-   * @event onDetachComponent
-   * @param {Entity} entity
-   * @param {Component} component
-   */
+  onAttachComponent(entity) {
+    this.registerEntitytoSystems(entity)
+  }
 
-  onDetachComponent(entity, component) {
-    delete this.entitiesToComponents[entity.id][component.name]
-    delete this.componentsToEntities[component.name][entity.id]
+  registerEntitytoSystems(entity) {
+    this.systems.forEach((system) => {
+      for (var i = 0; i < system.requiredComponents.length; i++) {
+        var name = system.requiredComponents[i]
+        if (!entity.get(name)) {
+          return
+        }
+      }
+
+      if (system.requiredComponents.length > 0) {
+        var systemEntities = this.systemsToEntities[system.constructor.name]
+        if (systemEntities.indexOf(entity) > -1) {
+          return
+        }
+        systemEntities.push(entity)
+        this._entitiesToSystems[entity.id].push(system)
+      }
+    })
   }
 
   /**
@@ -155,17 +147,17 @@ export default class World {
    * @param {Array} entities Array of json data
    */
   addEntities(array) {
-    return array.map((ison) => this.addEntity(ison))
+    return array.map((ison) => this.createEntity(ison))
   }
 
   /**
    * @method register
-   * @param  {System} SystemClass
+   * @param  {System} system
    * @param  {Array} requiredComponentClasses
    * @chainable
    */
-  register(SystemClass, requiredComponentClasses) {
-    this.addSystem(new SystemClass(), requiredComponentClasses)
+  register(system, requiredComponentClasses) {
+    this.addSystem(system, requiredComponentClasses)
     return this
   }
 
@@ -181,7 +173,6 @@ export default class World {
   }
 
   /**
-   * description of this method
    * @method addSystem
    * @param {System} system System to register
    * @param {Array} [requiredComponents] Explicit required components by name
@@ -197,14 +188,21 @@ export default class World {
         return isComponentClass ? Component.getName(c) : c
       })
     }
-    system.requiredComponents = requiredComponents || system.requiredComponents || []
-    system.requiredComponents.forEach((name) => {
-      if (!this.componentsToEntities[name]) {
-        this.componentsToEntities[name] = {}
-      }
-    })
+    system.world = this
+    if (requiredComponents) {
+      system.requiredComponents = requiredComponents
+    }
     this.systems.push(system)
+    this.systemsToEntities[system.constructor.name] = []
+    this._systems[system.constructor.name] = system
     return this
+  }
+
+  getSystem(SystemClass) {
+    if ('function' !== typeof SystemClass) {
+      throw new Error(`must be a system class`)
+    }
+    return this._systems[SystemClass.name]
   }
 
   /**
@@ -214,45 +212,31 @@ export default class World {
 
   update(elapsed) {
     var fps = this.fps
+    elapsed = elapsed || fps
     while (elapsed > 0) {
       var frameTime = elapsed > fps ? fps : elapsed
-      for (var i = 0; i < this.entities.length; i++) {
-        var entity = this.entities[i]
-        this.applySystems(entity, frameTime)
+      for (var i = 0, len = this.systems.length; i < len; i++) {
+        this.updateSystem(this.systems[i], frameTime)
       }
       elapsed -= fps
     }
   }
 
   /**
-   * @method applySystems
-   * @param {Entity} entity
-   * @param {Number} elapsed time since last update
-   */
-
-  applySystems(entity, frameTime) {
-    for (var i = 0, len = this.systems.length; i < len; i++) {
-      var system = this.systems[i]
-      this.applySystem(system, entity, frameTime)
-    }
-  }
-
-  /**
-   * @method applySystem
+   * @method updateSystem
    * @param {System} system
-   * @param {Entity} entity
-   * @param {Number} elapsed
+   * @param {Number} deltaTime
+   * @private
    */
 
-  applySystem(system, entity, frameTime) {
-    for (var i = 0, len = system.requiredComponents.length; i < len; i++) {
-      var name = system.requiredComponents[i]
-      var component = this.componentsToEntities[name][entity.id]
-      if (!component || !component.active) {
-        return
-      }
+  updateSystem(system, frameTime) {
+    var entities = this.systemsToEntities[system.constructor.name]
+    if (system.isStandalone) {
+      return system.update(null, frameTime)
     }
-    if (len) {
+
+    for(var i = 0; i < entities.length; i++) {
+      var entity = entities[i]
       system.update(entity, frameTime)
     }
   }
