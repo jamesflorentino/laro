@@ -18,8 +18,34 @@ Installation
 
 - `npm install laro --save`
 
-Basic Usaage
-============
+
+Basic Usage
+===========
+
+```JavaScript
+let world = new laro.World()
+
+world.components.register(CharacterComponent)
+world.components.register(StatsComponent)
+world.components.register(CombatComponent)
+
+world.register(new laro.systems.CombatSystem(), [StatsComponent, CombatComponent])
+
+world.add({
+  "character": { "name": "Knight" },
+  "stats": { "hp": 100, "atk": 10 }
+})
+
+world.add({
+  "character": { "name": "Slime" },
+  "stats": { "hp": 50, "atk": 1 }
+})
+
+world.update(1) // update one second
+```
+
+Example
+=======
 
 ```javascript
 import laro from 'laro'
@@ -68,8 +94,8 @@ world.register(CombatSystem, [ StatsComponent, CombatComponent ])
   }
  */
 
-let hero = world.addEntity(require('./data/entities/hero.json'))
-let monster = world.addEntity(require('./data/entities/monster.json'))
+let hero = world.add(require('./data/entities/hero.json'))
+let monster = world.add(require('./data/entities/monster.json'))
 
 /*
   You can expose and call functions of your component.
@@ -88,6 +114,37 @@ console.log(monster.components.stats.attribute.health.isEmpty()) // => true
 console.log(monster.components.character.name) // => Bakemono
 console.log(monster.components.character.type) // => monster
 ```
+
+World API
+=========
+
+##### `world.register( system )`
+
+> Registers a system to the game world. Systems are logic that are called on each tick
+
+**Arguments:**
+- `system` _[laro.System]_ - an instance of the `laro.System` class or a subclass of it
+
+##### `world.components.register( ComponentClass )`
+
+> Registers a component to the game world. When `world.add( data )` is called,
+> it will compare the keys of the data  to the registered components by name.
+> For example, if you registered `world.components.register( StatsComponent )`,
+> laro.World will try to match the `stats` attribute in the data.
+> e.g. `world.add({ "stats": { hp": 10 }})` will have a `StatsComponent`.
+> It uses underscore to separate words. So for example you have a `PhysicsBodyComponent`,
+> the game world will try to parse the `{ "physics_body": { "speed": 100 }}` property
+> in your data argument.
+
+**Arguments:**
+- `ComponentClass` _[Function]_ - A class or a function that is an extension or prototype of `laro.Component`
+
+##### `world.add( data )`
+
+> Adds/creates an entity to the world
+
+**Arguments:**
+- `data` _[object]_ - a manifest defining the component properties of the entity
 
 Design Patterns
 ===============
