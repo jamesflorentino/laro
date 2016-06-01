@@ -10,6 +10,7 @@ export default {
     GunComponent: require('./src/components/GunComponent').default,
     BulletComponent: require('./src/components/BulletComponent').default,
     DisplayComponent: require('./src/components/DisplayComponent').default,
+    CharacterComponent: require('./src/components/CharacterComponent').default,
   },
 
   systems: {

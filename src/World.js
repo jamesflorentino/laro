@@ -75,10 +75,12 @@ export default class World {
     // remove all references
     this.entities.splice(this.entities.indexOf(entity), 1)
     var systems = this._entitiesToSystems[entity.id]
-    systems.forEach(system => {
-      var entities = this.systemsToEntities[system.constructor.name]
-      entities.splice(entities.indexOf(entity), 1)
-    })
+    if (systems) {
+      systems.forEach(system => {
+        var entities = this.systemsToEntities[system.constructor.name]
+        entities.splice(entities.indexOf(entity), 1)
+      })
+    }
     delete this._entitiesToSystems[entity.id]
     this.events.onRemoveEntity.dispatch(entity)
   }
